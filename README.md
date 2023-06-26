@@ -3,6 +3,7 @@
 ![20230507_102923](https://github.com/RLmodel/RLCar/assets/32663016/f811e6a3-6740-42c5-b99f-ff7326d057b0)
 ![Screenshot from 2023-06-26 19-38-09](https://github.com/RLmodel/RLCar/assets/32663016/11f6b22c-ea56-480b-9072-cc9c6d6f4657)
 ## Manaul
+---------
 ### install def packages
 ------------------------
 . setup_script.sh
@@ -14,8 +15,8 @@ colcon build --packages-select src_demo
 colcon build --packages-select src_description   
 colcon build --packages-select src_gazebo   
 
-### Win, Ubuntu ROS ver
-LabVIEW, Python manual, ROS2 manual
+### Ubuntu ROS ver
+Python manual, ROS2 manual
 ## Hex file for arduino nano
 binary hex file for upload the board
 
