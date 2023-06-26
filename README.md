@@ -15,7 +15,7 @@ colcon build --packages-select src_description
 colcon build --packages-select src_gazebo   
 colcon build --packages-select src_gazebo_controller   
 colcon build --packages-select src_nav   
-colcon build --packages-select src_odometry
+colcon build --packages-select src_odometry   
 colcon build --packages-select src_sensor_fusion   
 colcon build --packages-select src_slam   
 
