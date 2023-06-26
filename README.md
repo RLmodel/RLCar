@@ -7,7 +7,7 @@
 ### install def packages
 ------------------------
 . setup_script.sh
-### Clone repo   
+### Clone repo & build   
 --------------
 colcon build --packages-select src_amcl   
 colcon build --packages-select src_controller   
