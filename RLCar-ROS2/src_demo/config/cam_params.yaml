@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    video_device: "/dev/cams/c920"
+    framerate: 30.0
+    io_method: "mmap"
+    frame_id: "camera"
+    pixel_format: "yuyv"
+    image_width: 640
+    image_height: 480
+    camera_name: "test_camera"
+    camera_info_url: "package://src_demo/config/camera_info.yaml"

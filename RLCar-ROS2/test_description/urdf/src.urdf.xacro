@@ -1,0 +1,230 @@
+<?xml version="1.0" ?>
+<robot name="src" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find test_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find test_description)/urdf/src.gazebo" />
+
+  <link name="base_footprint" />
+
+  <link name="base_link">
+    <inertial>
+      <!-- <origin xyz="-0.005482772974599414 -0.02435791820697421 0.08495983966151519" rpy="0 0 0"/> -->
+      <origin rpy="0 0 0" xyz="0.0769978638261129 -2.8140626253308825e-07 0.09495983966151514"/>
+      <mass value="31.702953623812817"/>
+      <inertia ixx="0.094192" ixy="0.0" ixz="-0.013351" iyy="0.285557" iyz="-0.0" izz="0.298406"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="right_rear_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="7.159278319822104e-09 -0.009000281406262398 -3.3086341685167886e-07"/>
+      <mass value="0.20069792517970372"/>
+      <inertia ixx="0.00014" ixy="0.0" ixz="-0.0" iyy="0.00025" iyz="0.0" izz="0.00014"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.0 0.089625 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/right_rear_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0.089625 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/right_rear_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_rear_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0.0 -0.089625 0.050754"/>
+    <parent link="base_link"/>
+    <child link="right_rear_wheel"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="10" velocity="100" />
+  </joint>
+
+  <link name="left_rear_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="7.1592785340951474e-09 0.008999718593737882 -3.3086341697657895e-07"/>
+      <mass value="0.20069792517970372"/>
+      <inertia ixx="0.00014" ixy="0.0" ixz="-0.0" iyy="0.00025" iyz="-0.0" izz="0.00014"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.0 -0.089625 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_rear_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.0 -0.089625 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_rear_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_rear_wheel_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="0.0 0.089625 0.050754"/>
+    <parent link="base_link"/>
+    <child link="left_rear_wheel"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="10" velocity="100" />
+  </joint>
+
+  <link name="right_steering_hinge">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.100"/>
+      <inertia ixx="4E-06" ixy="0"          ixz="0"
+                           iyy="4E-06"      iyz="0"
+                                            izz="4E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_steering_hinge.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+  </link>
+
+  <joint name="right_steering_hinge_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.275 -0.08875 0.050754"/>
+    <parent link="base_link" />
+    <child link="right_steering_hinge" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.7853" upper="0.7853" effort="10" velocity="100" />
+  </joint>
+
+  <link name="right_front_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="7.159277781720874e-09 -0.009000281406262675 -3.3086341699045674e-07"/>
+      <mass value="0.20069792517970372"/>
+      <inertia ixx="0.00014" ixy="0.0" ixz="-0.0" iyy="0.00025" iyz="-0.0" izz="0.00014"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.275 0.08875 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/right_front_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.275 0.08875 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/right_front_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_front_wheel_joint" type="continuous">
+    <origin rpy="0 1.5707 0" xyz="0 0 0"/>
+    <parent link="right_steering_hinge"/>
+    <child link="right_front_wheel"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="10" velocity="100" />
+  </joint>
+
+  <link name="left_steering_hinge">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.100"/>
+      <inertia ixx="4E-06" ixy="0"          ixz="0"
+                           iyy="4E-06"      iyz="0"
+                                            izz="4E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_steering_hinge.STL" />
+      </geometry>
+      <material name="grey" />
+    </visual>
+  </link>
+
+  <joint name="left_steering_hinge_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.275 0.08875 0.050754"/>
+    <parent link="base_link" />
+    <child link="left_steering_hinge" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.0" upper="1.0" effort="10" velocity="100" />
+  </joint>
+
+  <link name="left_front_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="7.1592781147877815e-09 0.008999718593737646 -3.30863420112959e-07"/>
+      <mass value="0.20069792517970372"/>
+      <inertia ixx="0.00014" ixy="-0.0" ixz="-0.0" iyy="0.00025" iyz="-0.0" izz="0.00014"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.275 -0.08875 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_front_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.275 -0.08875 -0.050754"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/left_front_wheel.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_front_wheel_joint" type="continuous">
+    <origin rpy="0 1.5707 0" xyz="0 0 0"/>
+    <parent link="left_steering_hinge"/>
+    <child link="left_front_wheel"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="10" velocity="100" />
+  </joint>
+
+  <link name="laser">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <mass value="0.04195569019892212"/>
+      <inertia ixx="2.3e-05" ixy="-0.0" ixz="-1e-06" iyy="2.4e-05" iyz="-0.0" izz="3.4e-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/laser.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="$(find test_description)/meshes/laser.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <joint name="laser_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="laser"/>
+  </joint>
+
+</robot>

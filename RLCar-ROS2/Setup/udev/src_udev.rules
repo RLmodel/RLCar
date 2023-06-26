@@ -1,0 +1,18 @@
+# set the udev rule , make the device_port be fixed by rplidar
+#
+
+# rplidar rules
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0777", SYMLINK+="rplidar"
+
+# Teensy rules
+KERNEL=="ttyACM*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04**", MODE:="0777", SYMLINK+="teensy4.0"
+KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04**", MODE:="0777", SYMLINK+="teensy4.0"
+
+# Nano RP2040 
+KERNEL=="ttyACM*", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="00**", MODE:="0777", SYMLINK+="rp2040"
+
+# Logitech Webcam C920
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="08**", ATTR{index}=="0", MODE="0777", GROUP="video", SYMLINK+="cams/c920"
+
+# MW-AHRSv1
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="23**", MODE:="0777", SYMLINK+="MWAHRs"

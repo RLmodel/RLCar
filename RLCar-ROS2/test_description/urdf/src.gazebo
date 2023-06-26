@@ -1,0 +1,126 @@
+<?xml version="1.0" ?>
+<robot name="src" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+  <xacro:property name="body_color" value="Gazebo/Silver" />
+  <xacro:property name="wheel_color" value="Gazebo/Black" />
+  <xacro:property name="laser_color" value="Gazebo/DarkGrey" />
+
+  <gazebo reference="base_link">
+    <material>${body_color}</material>
+    <mu1>100.2</mu1>
+    <mu2>100.2</mu2>
+    <fdir1 value="1 0 0" />
+    <selfCollide>true</selfCollide>
+    <gravity>true</gravity>
+  </gazebo>
+
+  <gazebo reference="right_rear_wheel">
+    <material>${wheel_color}</material>
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <fdir1 value="1 0 0" />
+    <selfCollide>true</selfCollide>
+  </gazebo>
+
+  <gazebo reference="left_rear_wheel">
+    <material>${wheel_color}</material>
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <fdir1 value="1 0 0" />
+    <selfCollide>true</selfCollide>
+  </gazebo>
+
+  <gazebo reference="right_front_wheel">
+    <material>${wheel_color}</material>
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <fdir1 value="1 0 0" />
+    <selfCollide>true</selfCollide>
+  </gazebo>
+
+  <gazebo reference="left_front_wheel">
+    <material>${wheel_color}</material>
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <fdir1 value="1 0 0" />
+    <selfCollide>true</selfCollide>
+  </gazebo>
+
+  <gazebo reference="laser">
+    <material>${laser_color}</material>
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <selfCollide>true</selfCollide>
+  </gazebo>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <!-- velocity controller -->
+    <joint name="left_rear_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="right_rear_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="left_front_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="right_front_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <!-- position controller for steering -->
+    <joint name="left_steering_hinge_joint">
+      <command_interface name="position">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="right_steering_hinge_joint">
+      <command_interface name="position">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <!-- wanted to add ros2 control's imu -->
+    <!-- but there's no option for imu covariance setting -->
+    <!-- <sensor name="src_imu_sensor">
+      <state_interface name="orientation.x"/>
+      <state_interface name="orientation.y"/>
+      <state_interface name="orientation.z"/>
+      <state_interface name="orientation.w"/>
+      <state_interface name="angular_velocity.x"/>
+      <state_interface name="angular_velocity.y"/>
+      <state_interface name="angular_velocity.z"/>
+      <state_interface name="linear_acceleration.x"/>
+      <state_interface name="linear_acceleration.y"/>
+      <state_interface name="linear_acceleration.z"/>
+    </sensor> -->
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find test_description)/config/ackermann_controller.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

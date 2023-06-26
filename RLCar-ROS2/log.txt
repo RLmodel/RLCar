@@ -1,0 +1,184 @@
+ros2 pkg create --build-type ament_cmake mw_ahrsv1_ros2 --dependencies rclcpp std_msgs sensor_msgs tf geometry_msgs tf2 tf2_ros tf2_msgs
+
+
+```
+docker run -it --rm --name micro-ros-foxy --net=host -v /dev:/dev --privileged tge1375/sw-micro-ros:0.0.4
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/teensy4.0
+
+ros2 launch src_demo joystick_control_foxy.launch.py
+ros2 launch src_odometry src_bringup.launch.py
+ros2 launch src_odometry src_bringup_new.launch.py
+```
+
+```
+ros2 run joy_to_cmd joy_to_cmd_vel
+ros2 run cmd_to_src cmd_to_src
+
+ros2 launch src_odometry src_bringup.launch.py
+ros2 run joy joy_node
+```
+
+Real src
+
+```
+docker run -it --rm --name micro-ros-foxy --net=host -v /dev:/dev --privileged tge1375/sw-micro-ros:0.0.4
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/teensy4.0
+
+ros2 launch src_demo joystick_control_foxy.launch.py
+ros2 launch src_odometry src_bringup_new.launch.py 
+```
+
+2022 05 04 log
+
+```
+ros2 launch src_odometry src_bringup.launch.py
+```
+
+# TODO
+-0.05 +0.05 오가면 변경 시마다 빠르게 전환되었다가 점차 느려지는 현상 발생
+=> 속도 변환 시 pwm을 나누기 2가 아니라 현재 속도에 비례하여 일정 수 만큼 작아지도록 고침
+
+ros2 run rqt_robot_steering rqt_robot_steering --force-discover
+
+0.1 정도 속도에서는 가다말다 한다.
+=> 실제 pwm도 오락가락 했음
+
+2022 05 05 log
+
+micro-ros단의 주기를 더 느리게 해보자. 40ms => 80ms
+
+무언가에 걸려서 못넘어가는 경우, 이를 보상하기 위해 갑자기 빨라져버리는 현상이 발생하며, 
+이는 특히 회전이 걸려있을 시 위험하다.
+
+navigation이 되기는 한다.
+대신 이러한 점들이 고쳐져야 함
+- 가속 문제 (가속이 너무 천천히 된다.)
+- 각속도 제어 문제 (현재는 각속도가 이리저리 oscillation이 생기고 있다.)
+- 최대 속도 제한 주기 (현재 너무 빠르게 움직인다.)
+
+2022 05 08 log
+
+- joystick 으로 움직일 시 가다 멈추다 하는 현상 발견, 천천히 속도 올리면 안그런다.
+- cmd_to_src 100ms period
+
+=> 그런데 사실 cmd_vel pub 주기는 큰 상관 없다.
+
+```
+// twist message cb
+static void subscription_callback(const void *msgin) {
+
+  const src_control_message__msg__SRCMsg *msg_sub = static_cast<const src_control_message__msg__SRCMsg *>(msgin);
+
+  if (msg_sub != NULL) {
+
+    digitalWrite(LIGHT_PIN, msg_sub->light); // Light 
+
+    myServo.write(msg_sub->steering); // Steering Setup
+
+    if (dir_old == 1){
+      digitalWrite(dir_m1pin, HIGH);  //M1 dir
+      // digitalWrite(dir_m2pin, HIGH); //M2 dir
+    }
+    else if (dir_old == -1){
+      digitalWrite(dir_m1pin, LOW); //M1 dir
+      // digitalWrite(dir_m2pin, LOW);  //M2 dir
+    }
+
+    if (ENCODER_STATE == INITIAL_STATE)
+      ENCODER_STATE = FIRST_SUB;
+    else
+      ENCODER_STATE = PUB_ODOM;
+  }
+}
+```
+- 해결! joy_to_cmd에 의해 accel, deaccel value들이 제한되고 있었다.
+
+Fixed
+- min_x_velocity_threshold : 0.1로 확 키웠더니 일정한 속도를 내뱉었다.
+- desired_linear_vel : 0.5 였는데 너무 빨라서 좀 줄였다.
+- use_cost_regulated_linear_velocity_scaling : true
+- 도착 했는데 멈추지 못하고 계속 가는 문제 => ssh 
+  - yaw tolerance를 키워줘보았다. 0.5 => 1.507
+- 일정한 속도가 된 것이 누구 덕분인지 알아내기 controller_frequency or min_x_velocity_threshold
+  - controller_frequency => 20 no problem 
+  - min_x_velocity_threshold => 0.01 no problem 이지만 다시 1.0으로 롤백
+- min_theta_velocity_threshold : 좀 더 올려보자.
+  - 0.05 => 0.1 odom에서 받아들일 때 0.1 보다 작은 단위는 무시하겠다는 뜻임 0.11 = 0.1 조금 나아졌지만 역시 PID는 잡아야 함
+
+TODO
+- Yaw control : PID tuning 해두기는 했는데 좀 더 맞줘야 함
+- allow_reversing 해도 뒤로는 안가는 문제
+- min_approach_linear_velocity : 목표 접근 시 속도 => 0.05 ro 줄여보자.
+
+[] micro ros 연결 시 잘 안되는 경우 해결
+[] twiddle
+[] 
+
+
+Camera logs
+
+```
+v4l2-ctl -d /dev/cams/c920 --list-formats-ext
+
+ioctl: VIDIOC_ENUM_FMT
+	Type: Video Capture
+
+	[0]: 'YUYV' (YUYV 4:2:2)
+		Size: Discrete 640x480
+			Interval: Discrete 0.033s (30.000 fps)
+			Interval: Discrete 0.042s (24.000 fps)
+			Interval: Discrete 0.050s (20.000 fps)
+			Interval: Discrete 0.067s (15.000 fps)
+			Interval: Discrete 0.100s (10.000 fps)
+			Interval: Discrete 0.133s (7.500 fps)
+			Interval: Discrete 0.200s (5.000 fps)
+```
+
+```
+ros2 launch src_demo usb_cam.launch.py 
+ros2 run rqt_image_view rqt_image_view 
+```
+
+```
+$ ros2 topic list
+/camera_info
+/image_raw
+/image_raw/compressed
+/image_raw/compressedDepth
+/image_raw/theora
+/parameter_events
+/rosout
+```
+
+# Docker img Setup
+
+sudo apt install ros-foxy-xacro
+sudo apt install ros-foxy-joint-state-publisher
+sudo apt install ros-foxy-robot-state-publisher
+sudo apt install ros-foxy-joint-state-publisher-gui 
+sudo apt install ros-foxy-rqt-robot-steering
+sudo apt install ros-foxy-controller-manager
+sudo apt install ros-foxy-ros2-control
+sudo apt install ros-foxy-hardware-interface
+sudo apt install ros-foxy-gazebo-* -y
+sudo apt install ros-foxy-slam-toolbox
+sudo apt install ros-foxy-slam-toolbox
+sudo apt install ros-foxy-cartographer* -y
+sudo apt install ros-foxy-robot-localization -y
+
+ros2 run rqt_robot_steering rqt_robot_steering  --force-discover
+
+
+git clone -b foxy https://github.com/ros-controls/ros2_control_demos.git
+cbp diffbot_description && rosfoxy
+cbp ros2_control_test_nodes && rosfoxy
+cbp rrbot_description && rosfoxy
+cbp ros2_control_demo_hardware && rosfoxy
+cbp ros2_control_demo_bringup && rosfoxy
+cbp ros2_control_demos && rosfoxy
+cbp src_gazebo_controller && rosfoxy
+
+- robot-localization
+- slam-toolbox
+- cartographer
+- nav2
