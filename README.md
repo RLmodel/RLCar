@@ -29,13 +29,9 @@ binary hex file for upload the board
 
 ### simple manual
 - docker run -it --rm --name micro-ros-foxy --net=host -v /dev:/dev --privileged tge1375/sw-micro-ros:0.0.4
-- 
 - ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/teensy4.0
-- 
 - ros2 launch src_slam src_slam.launch.py open_rviz:=false
-- 
 - ros2 launch src_demo joystick_control_foxy.launch.py
-- 
 - rviz2
 - 
 - cd /dev/input
