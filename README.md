@@ -28,24 +28,19 @@ binary hex file for upload the board
 
 
 ### simple manual
-docker run -it --rm --name micro-ros-foxy --net=host -v /dev:/dev --privileged tge1375/sw-micro-ros:0.0.4
-ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/teensy4.0
-ros2 launch src_slam src_slam.launch.py open_rviz:=false
-ros2 launch src_demo joystick_control_foxy.launch.py
-rviz2
+- docker run -it --rm --name micro-ros-foxy --net=host -v /dev:/dev --privileged tge1375/sw-micro-ros:0.0.4
+- ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/teensy4.0
+- ros2 launch src_slam src_slam.launch.py open_rviz:=false
+- ros2 launch src_demo joystick_control_foxy.launch.py
+- rviz2
 
 
-//
-cd /dev/input
-ls | grep js
-js0
-//
-ros2 run joy joy_node
-//
-ros2 topic echo /joy
-//
-ros2 launch rplidar_ros view_rplidar_a2m8_launch.py
-//
-ros2 launch mw_ahrsv1_ros2 view_imu.launch.py
-//
-cbp src_nav && rosfoxy
+- cd /dev/input
+- ls | grep js
+- js0
+
+- ros2 run joy joy_node
+- ros2 topic echo /joy
+- ros2 launch rplidar_ros view_rplidar_a2m8_launch.py
+- ros2 launch mw_ahrsv1_ros2 view_imu.launch.py
+- cbp src_nav && rosfoxy
