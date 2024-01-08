@@ -25,6 +25,7 @@ Python manual, ROS2 manual
 binary hex file for upload the board
 
 ![xloader](https://user-images.githubusercontent.com/32663016/227823399-03a04a84-f2a9-4a4b-a09e-c7dcb68fe870.jpg)
+![3D_product_Rv](https://github.com/RLmodel/RLCar/assets/32663016/e931314c-a3b3-4b8a-8ad3-a0d3a339331b)
 
 
 ### simple manual
