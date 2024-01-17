@@ -14,3 +14,4 @@ Joystick RLCar control: https://drive.google.com/file/d/19kH2ausHrf8d7JzjFsF5sGQ
 ![joystick tester](https://github.com/RLmodel/RLCar/assets/32663016/cc25ab74-72d5-4501-ac09-6a332f91b96e)
 
 
+![RLCar joystick](https://github.com/RLmodel/RLCar/assets/32663016/eedc190c-a89d-4629-8f10-34a93ab6e889)
